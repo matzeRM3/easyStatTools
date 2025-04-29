@@ -5,7 +5,7 @@ with recommendations based on data assumptions (normality, variance homogeneity)
 
 ---
 
-## 🔧 Installation
+## Installation
 
 Install the package directly from GitHub:
 
