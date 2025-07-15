@@ -10,6 +10,7 @@
 #' @param ref.group (Optional) The name of the reference (control) group (as string) for multiple group comparisons.
 #' @param paired Logical. Should a paired test be performed? Default: FALSE.
 #' @param ask Logical. Should the user be asked whether to proceed? Default: TRUE.
+#' @param correction Logical. Should p-value adjustment for multiple testing be applied? Default: TRUE.
 #'
 #' @return Dataframe with test results and significance stars.
 #' @export
@@ -18,8 +19,8 @@
 #' @importFrom dplyr group_by summarise sym
 #'
 #' @examples
-#' my_t_test_helper(foldchange ~ group, data = df, ref.group = "ctrl", ask = FALSE)
-my_t_test_helper <- function(formula, data, ref.group = NULL, paired = FALSE, ask = TRUE) {
+#' my_t_test_helper(foldchange ~ group, data = df, ref.group = "ctrl", ask = FALSE, correction = TRUE)
+my_t_test_helper <- function(formula, data, ref.group = NULL, paired = FALSE, ask = TRUE, correction = TRUE) {
   if (!requireNamespace("car", quietly = TRUE)) stop("Package 'car' is required.")
   if (!requireNamespace("rstatix", quietly = TRUE)) stop("Package 'rstatix' is required.")
   if (!requireNamespace("dplyr", quietly = TRUE)) stop("Package 'dplyr' is required.")
@@ -54,14 +55,15 @@ my_t_test_helper <- function(formula, data, ref.group = NULL, paired = FALSE, as
   # Empfehlung/Testauswahl
   if (normal & homo) {
     rec_test <- "Student"
-    rec_corr <- ifelse(n_groups == 2, "none", "holm")
+    rec_corr <- ifelse(n_groups == 2 || !correction, "none", "holm")
   } else if (normal & !homo) {
     rec_test <- "Welch"
-    rec_corr <- ifelse(n_groups == 2, "none", "holm")
+    rec_corr <- ifelse(n_groups == 2 || !correction, "none", "holm")
   } else {
     rec_test <- "Wilcoxon"
-    rec_corr <- ifelse(n_groups == 2, "none", "BH")
+    rec_corr <- ifelse(n_groups == 2 || !correction, "none", "BH")
   }
+  
   
   if (n_groups == 2) {
     cat("\nOnly two groups detected: No correction for multiple testing required.\n")
@@ -99,7 +101,7 @@ my_t_test_helper <- function(formula, data, ref.group = NULL, paired = FALSE, as
       stop("Unknown test type selected.")
     }
     
-    if (rec_corr != "none") {
+    if (correction && rec_corr != "none") {
       res <- res %>%
         adjust_pvalue(method = rec_corr)
       res$p.adj.signif <- symnum(
@@ -126,7 +128,7 @@ my_t_test_helper <- function(formula, data, ref.group = NULL, paired = FALSE, as
       stop("Unknown test type selected.")
     }
     
-    if (rec_corr != "none") {
+    if (correction && rec_corr != "none") {
       res <- res %>%
         adjust_pvalue(method = rec_corr)
       res$p.adj.signif <- symnum(

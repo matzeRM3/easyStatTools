@@ -4,7 +4,14 @@
 \alias{my_t_test_helper}
 \title{t-Test Helper: Automated Group-vs-Control or Two-Group Comparison with Multiple Testing Correction}
 \usage{
-my_t_test_helper(formula, data, ref.group = NULL, paired = FALSE, ask = TRUE)
+my_t_test_helper(
+  formula,
+  data,
+  ref.group = NULL,
+  paired = FALSE,
+  ask = TRUE,
+  correction = TRUE
+)
 }
 \arguments{
 \item{formula}{Model formula (e.g. value ~ group).}
@@ -16,6 +23,8 @@ my_t_test_helper(formula, data, ref.group = NULL, paired = FALSE, ask = TRUE)
 \item{paired}{Logical. Should a paired test be performed? Default: FALSE.}
 
 \item{ask}{Logical. Should the user be asked whether to proceed? Default: TRUE.}
+
+\item{correction}{Logical. Should p-value adjustment for multiple testing be applied? Default: TRUE.}
 }
 \value{
 Dataframe with test results and significance stars.
