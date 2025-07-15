@@ -1,7 +1,7 @@
 Package: easyStatTools
 Type: Package
 Title: Easy Statistical Tools for ANOVA and Post-hoc Analysis
-Version: 1.1.1
+Version: 1.1.0
 Author: Matthias Plath [aut, cre]
 Maintainer: Matthias Plath <matthias.plath@unimedizin-mainz.de>
 Description: A simple toolkit for running ANOVA with automated test selection, assumption checks, and post-hoc analysis.
