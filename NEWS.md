@@ -6,6 +6,6 @@
 
 ## Neue Funktionen
 
-- `my_t_test_helper()` unterstützt jetzt das neue Argument `correction`.
-  - Damit lässt sich die multiple Testkorrektur deaktivieren (`correction = FALSE`).
-  - Standardmäßig bleibt die Korrektur aktiviert (`correction = TRUE`).
+- `my_t_test_helper()` supports new argument `correction`.
+  - allows to deactivate correction for multiple testing (`correction = FALSE`).
+  - standard is a activated correction (`correction = TRUE`).
