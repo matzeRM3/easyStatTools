@@ -1,5 +1,3 @@
-# easyStatTools 1.1.1
-
 # easyStatTools 0.1.0
 
 * Initial CRAN submission.
