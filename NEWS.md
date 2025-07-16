@@ -4,7 +4,7 @@
 
 # easyStatTools 1.1.0
 
-## Neue Funktionen
+## New Function
 
 - `my_t_test_helper()` supports new argument `correction`.
   - allows to deactivate correction for multiple testing (`correction = FALSE`).
