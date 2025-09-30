@@ -1,6 +1,6 @@
 #' t-Test Helper: Automated Group-vs-Control or Two-Group Comparison with Multiple Testing Correction
 #'
-#' Checks for normality (Shapiro-Wilk) and homogeneity of variance (Levene),
+#' Checks for normality (Shapiro-Wilk) and homogeneity of variance (Brown-Forsythe test),
 #' recommends the appropriate t-test or Wilcoxon test and multiple testing correction,
 #' compares all groups against a reference group (if >2), or compares two groups,
 #' and returns a result table with adjusted p-values and significance stars.
@@ -17,9 +17,26 @@
 #' @importFrom car leveneTest
 #' @importFrom rstatix t_test wilcox_test adjust_pvalue add_significance
 #' @importFrom dplyr group_by summarise sym
+#' @importFrom stats relevel shapiro.test symnum
+#' @importFrom dplyr %>%
+#' @importFrom rlang .data
+#' @importFrom tibble rownames_to_column
+#' @importFrom tidyr pivot_longer
+
 #'
 #' @examples
-#' my_t_test_helper(foldchange ~ group, data = df, ref.group = "ctrl", ask = FALSE, correction = TRUE)
+#' # Example dataset
+#' df <- data.frame(
+#'   foldchange = c(1.2, 1.3, 0.9, 1.1, 1.0,2.0, 2.1, 1.9, 2.2, 2.0,
+#'   1.5, 1.4, 1.6, 1.7, 1.5),
+#'   group = c(rep("ctrl", 5),
+#'   rep("treat1", 5),
+#'   rep("treat2", 5))
+#' )
+#'
+#' # Run helper
+#' my_t_test_helper(foldchange ~ group, data = df,
+#'                  ref.group = "ctrl", ask = FALSE, correction = TRUE)
 my_t_test_helper <- function(formula, data, ref.group = NULL, paired = FALSE, ask = TRUE, correction = TRUE) {
   if (!requireNamespace("car", quietly = TRUE)) stop("Package 'car' is required.")
   if (!requireNamespace("rstatix", quietly = TRUE)) stop("Package 'rstatix' is required.")
@@ -45,9 +62,9 @@ my_t_test_helper <- function(formula, data, ref.group = NULL, paired = FALSE, as
   print(shap_results)
   normal <- all(shap_results$p > 0.05)
   
-  # Levene's test
-  lev <- car::leveneTest(formula, data)
-  cat("\nLevene's test (homogeneity of variance):\n")
+  # Brown-Forsythe test (variance homogeneity, median-centered Levene)
+  lev <- car::leveneTest(formula, data, center = "median")
+  cat("\nBrown-Forsythe test (homogeneity of variance):\n")
   print(lev)
   lev_p <- lev$"Pr(>F)"[1]
   homo <- lev_p > 0.05

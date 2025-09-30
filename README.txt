@@ -1,7 +1,7 @@
 # easyStatTools
 
 **A lightweight R package for automated statistical testing**  
-with recommendations based on data assumptions (normality, variance homogeneity).
+with test recommendations based on normality and variance assumptions.
 
 ---
 
@@ -12,66 +12,85 @@ Install the package directly from GitHub:
 ```r
 install.packages("devtools")  # if not already installed
 devtools::install_github("matzeRM3/easyStatTools")
-
+```
+### 
 Functions
-my_anova_helper(formula, data, ask = TRUE)
+
+`my_anova_helper(formula, data, ask = TRUE, ref.group = NULL)`
+
+Performs:
+- Shapiro-Wilk test (normality per group)
+- Brown-Forsythe (homogeneity of variance)
+
+Based on assumptions, recommends and runs:
+- Classical ANOVA + Tukey post-hoc
+- Welch ANOVA + Games-Howell post-hoc
+- Kruskal-Wallis + Dunn post-hoc
+
+Includes interactive dialog (`ask = TRUE`) or silent auto-run mode (`ask = FALSE`).
+
+By default, multiple comparisons are applied to all group combinations.  
+If a `ref.group` is specified, only comparisons against this reference group are performed.  
+To maximize statistical power, this setting uses tailored post-hoc tests:
+
+- Classical ANOVA → Dunnett’s test
+- Welch ANOVA → Dunnett’s T3 test
+- Kruskal-Wallis → Dunn test (restricted to ref.group comparisons)
+
+**Example:**
+
+```r
+result <- my_anova_helper(foldchange ~ group, data = mydata, ask = FALSE)
+print(result)
+```
+
+`my_t_test_helper(formula, data, ref.group = NULL, paired = FALSE, ask = TRUE, correction = TRUE)`
+
 Performs:
 
-Shapiro-Wilk test (normality per group)
+Shapiro-Wilk test (normality)
 
-Levene’s test (homogeneity of variance)
+Levene’s test (variance homogeneity)
 
 Recommends and runs:
 
-classical ANOVA + Tukey
+Student’s t-test
 
-Welch ANOVA + Games-Howell
-
-Kruskal-Wallis + Dunn
-
-Includes an interactive dialog (ask = TRUE) or auto-run mode (ask = FALSE).
-
-Example:
-
-result <- my_anova_helper(foldchange ~ group, mydata, ask = FALSE)
-print(result)  # post-hoc tibble with p-values and stars
-
-my_t_test_helper(formula, data, ref.group = NULL, paired = FALSE, ask = TRUE)
-Performs:
-
-Shapiro-Wilk + Levene tests
-
-Recommends:
-
-Student t-test
-
-Welch t-test
+Welch’s t-test
 
 Wilcoxon rank-sum test
 
-Applies multiple testing correction (Holm, Bonferroni, BH)
+Handles both 2-group and multi-group comparisons.
 
-If more than 2 groups are found, all are compared to a reference group (ref.group required).
+For >2 groups, requires ref.group to compare all levels against the control.
 
-Example with 2 groups:
+Applies multiple testing correction (Holm, Bonferroni, or BH) by default.
+Set correction = FALSE to skip p-value adjustment.
+
+**Examples:**
+
+```r
+# Two groups
 result <- my_t_test_helper(foldchange ~ treatment, data = mydata, ask = FALSE)
 
-Example with >2 groups:
+# Multiple groups vs control
 result <- my_t_test_helper(foldchange ~ group, data = mydata, ref.group = "ctrl", ask = FALSE)
+```
+###
+Output
 
-Both functions return a tibble with these columns:
+Both functions return a tibble with:
 
-group1 / group2
+group1, group2
 
-estimate / conf.low / conf.high
+estimate, conf.low, conf.high
 
-p / p.adj / p.adj.signif
-→ significance stars according to p.adj
+p, p.adj, p.adj.signif (****, ***, **, *, ns)
 
-Use geom_signif() in ggplot2 with results$p.adj.signif for annotated bar plots.
+Can be used with ggplot2::geom_signif() for annotated bar plots.
 
+###
 Dependencies
-The package depends on:
 
 rstatix
 
@@ -81,10 +100,13 @@ dplyr
 
 multcompView
 
+##
 Feedback
+
 Open an issue at:
 https://github.com/matzeRM3/easyStatTools/issues
 
+##
 License
+
 MIT © Matthias Plath
----

@@ -16,11 +16,11 @@ devtools::install_github("matzeRM3/easyStatTools")
 ### 
 Functions
 
-`my_anova_helper(formula, data, ask = TRUE)`
+`my_anova_helper(formula, data, ask = TRUE, ref.group = NULL)`
 
 Performs:
 - Shapiro-Wilk test (normality per group)
-- Levene’s test (homogeneity of variance)
+- Brown-Forsythe (homogeneity of variance)
 
 Based on assumptions, recommends and runs:
 - Classical ANOVA + Tukey post-hoc
@@ -29,10 +29,23 @@ Based on assumptions, recommends and runs:
 
 Includes interactive dialog (`ask = TRUE`) or silent auto-run mode (`ask = FALSE`).
 
+By default, multiple comparisons are applied to all group combinations.  
+If a `ref.group` is specified, only comparisons against this reference group are performed.  
+To maximize statistical power, this setting uses tailored post-hoc tests:
+
+- Classical ANOVA → Dunnett’s test
+- Welch ANOVA → Dunnett’s T3 test
+- Kruskal-Wallis → Dunn test (restricted to ref.group comparisons)
+
 **Example:**
 
 ```r
+#Multiple comparison with all groups
 result <- my_anova_helper(foldchange ~ group, data = mydata, ask = FALSE)
+print(result)
+
+#multiple comparison just to ref.group
+result <- my_anova_helper(foldchange ~ group, data = mydata, ask = FALSE, ref.group ="ctrl")
 print(result)
 ```
 

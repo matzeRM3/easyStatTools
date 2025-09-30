@@ -30,11 +30,22 @@ my_t_test_helper(
 Dataframe with test results and significance stars.
 }
 \description{
-Checks for normality (Shapiro-Wilk) and homogeneity of variance (Levene),
+Checks for normality (Shapiro-Wilk) and homogeneity of variance (Brown-Forsythe test),
 recommends the appropriate t-test or Wilcoxon test and multiple testing correction,
 compares all groups against a reference group (if >2), or compares two groups,
 and returns a result table with adjusted p-values and significance stars.
 }
 \examples{
-my_t_test_helper(foldchange ~ group, data = df, ref.group = "ctrl", ask = FALSE)
+# Example dataset
+df <- data.frame(
+  foldchange = c(1.2, 1.3, 0.9, 1.1, 1.0,2.0, 2.1, 1.9, 2.2, 2.0,
+  1.5, 1.4, 1.6, 1.7, 1.5),
+  group = c(rep("ctrl", 5),
+  rep("treat1", 5),
+  rep("treat2", 5))
+)
+
+# Run helper
+my_t_test_helper(foldchange ~ group, data = df,
+                 ref.group = "ctrl", ask = FALSE, correction = TRUE)
 }

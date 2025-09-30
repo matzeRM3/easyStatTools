@@ -4,7 +4,7 @@
 \alias{my_anova_helper}
 \title{ANOVA Helper: Automated Test Selection and Post-hoc Analysis}
 \usage{
-my_anova_helper(formula, data, ask = TRUE)
+my_anova_helper(formula, data, ask = TRUE, ref.group = NULL)
 }
 \arguments{
 \item{formula}{Model formula (e.g. value ~ group).}
@@ -12,14 +12,21 @@ my_anova_helper(formula, data, ask = TRUE)
 \item{data}{Dataframe containing the variables.}
 
 \item{ask}{Logical. Should user be asked whether to proceed (default TRUE)?}
+
+\item{ref.group}{Optional. Name of reference group. If NULL, all pairwise comparisons are performed.}
 }
 \value{
 Post-hoc results as dataframe (tibble), with rstatix-style significance stars in 'p.adj.signif'.
 }
 \description{
-Checks for normality (Shapiro-Wilk) and homogeneity of variance (Levene),
+Checks for normality (Shapiro-Wilk) and homogeneity of variance (Brown-Forsythe test),
 recommends the appropriate ANOVA and post-hoc test, and performs the analysis.
 }
 \examples{
-my_anova_helper(value ~ group, mydata, ask = FALSE)
+set.seed(123)
+demo <- data.frame(
+  value = c(rnorm(10, 5), rnorm(10, 6), rnorm(10, 7)),
+  group = rep(c("ctrl", "A", "B"), each = 10)
+)
+my_anova_helper(value ~ group, demo, ask = FALSE, ref.group = "ctrl")
 }
