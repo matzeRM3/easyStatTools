@@ -55,7 +55,7 @@ Performs:
 
 Shapiro-Wilk test (normality)
 
-Levene’s test (variance homogeneity)
+Brown-Forsythe (homogeneity of variance)
 
 Recommends and runs:
 
