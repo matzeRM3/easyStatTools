@@ -126,7 +126,9 @@ my_anova_helper <- function(formula, data, ask = TRUE, ref.group = NULL) {
       posthoc <- as.data.frame(summary(dun)$p.value) |> 
         tibble::rownames_to_column("Comparison") |>
         tidyr::pivot_longer(-Comparison, names_to = "Group", values_to = "p.adj") |>
-        dplyr::filter(Comparison == ref.group | Group == ref.group)
+        dplyr::filter(
+          (Comparison == ref.group & Group != ref.group) |
+          (Group == ref.group & Comparison != ref.group))
       posthoc$p.adj.signif <- symnum(
         posthoc$p.adj,
         cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1),

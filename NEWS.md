@@ -26,3 +26,9 @@
 
 ## Other
 - Documentation and README updated to reflect the new methods.
+
+#easStatTools 2.1.0
+- bug fixes
+
+#easyStatTools 2.1.1
+- more bug fixes
