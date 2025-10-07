@@ -120,7 +120,7 @@ my_anova_helper <- function(formula, data, ask = TRUE, ref.group = NULL) {
       return(rstatix::games_howell_test(data = data, formula = formula))
     }
     if (rec_posthoc == "DunnettT3") {
-      data[[group]] <- relevel(factor(data[[group]]), ref = ref.group)
+      data[[group]] <- factor(data[[group]], levels = unique(c(ref.group, setdiff(unique(data[[group]]), ref.group))))
       dun <- PMCMRplus::dunnettT3Test(formula, data = data)
       posthoc <- as.data.frame(summary(dun)$p.value) |> 
         tibble::rownames_to_column("Comparison") |>
@@ -150,4 +150,3 @@ my_anova_helper <- function(formula, data, ask = TRUE, ref.group = NULL) {
   
   cat("Selected combination not supported.\n")
 }
-
