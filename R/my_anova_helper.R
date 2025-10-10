@@ -28,15 +28,7 @@
 #' )
 #' my_anova_helper(value ~ group, demo, ask = FALSE, ref.group = "ctrl")
 my_anova_helper <- function(formula, data, ask = TRUE, ref.group = NULL) {
-  if (!requireNamespace("car", quietly = TRUE)) stop("Package 'car' is required.")
-  if (!requireNamespace("rstatix", quietly = TRUE)) stop("Package 'rstatix' is required.")
-  if (!requireNamespace("dplyr", quietly = TRUE)) stop("Package 'dplyr' is required.")
-  if (!requireNamespace("PMCMRplus", quietly = TRUE)) stop("Package 'PMCMRplus' is required.")
-  
-  library(car)
-  library(rstatix)
-  library(dplyr)
-  
+
   vars <- all.vars(formula)
   response <- vars[1]
   group <- vars[2]
